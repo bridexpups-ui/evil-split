@@ -1391,3 +1391,32 @@ body{overflow-x:clip}
   /* 5. the flicker repaints a full-screen gradient stack */
   .bolts{animation:none;opacity:.3}
 }
+
+/* ================================================= */
+/* ====== SAFARI RENDERING FIX (correctness) ======= */
+/* ================================================= */
+
+/* On iOS Safari only the first row was painting; the rest reserved their
+   height and came out blank. The cause is the set of containment properties
+   added while chasing frame rate -- Safari has long-standing bugs painting
+   elements under `contain: paint` and `content-visibility: auto`, and
+   `overflow: clip` is newer than some iOS versions in the wild.
+
+   None of them were worth a page that does not render. All removed. */
+
+.day{contain:none}
+.cmt,
+.stat{
+  content-visibility:visible;
+  contain-intrinsic-size:auto;
+}
+html,
+body{
+  overflow-x:hidden;        /* universally supported, unlike clip */
+}
+
+@media (max-width:620px){
+  .day{contain:none}
+  .cmt,
+  .stat{content-visibility:visible}
+}
