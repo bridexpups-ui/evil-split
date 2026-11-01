@@ -1135,3 +1135,58 @@ body.lite .day::after{box-shadow:none;will-change:auto}
 /* last filter on the page, and it sat on a continuously rotating element,
    so it was re-applied every frame for nine seconds at a time, forever */
 .burst{filter:none}
+
+/* ================================================= */
+/* ===== HOVER THAT POPS AND STILL COSTS NOTHING === */
+/* ================================================= */
+
+/* Stripping the blurs killed the feel, so the lift is back -- but built only
+   out of transform and opacity, the two things the compositor does without
+   repainting.
+   
+   Promoting the rows is cheap now in a way it was not before: a promoted
+   layer only costs its own pixels, and earlier each one also had to be
+   re-rendered through three drop-shadow blur passes. With no blur left
+   inside a row, the layer is just a texture the GPU can slide around. */
+
+.day{
+  will-change:transform;
+  transition:transform .13s cubic-bezier(.2,.9,.3,1);
+}
+
+/* a bright wash of the row's own colour, sitting over the background and the
+   art but under the text. opacity only. */
+.day::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(90deg,
+    hsla(var(--h),100%,60%,.5),
+    hsla(var(--h),100%,52%,.26) 48%,
+    hsla(var(--h),100%,72%,.3));
+  opacity:0;
+  transition:opacity .13s ease-out;
+}
+
+.day:hover{
+  transform:rotate(var(--rot)) translateX(-7px) scale(1.02);
+  z-index:3;
+}
+.day:hover::before{opacity:1}
+.day:hover::after{opacity:1}
+
+.day::after{z-index:1}
+
+body.lite .day{will-change:auto;transition:none}
+body.lite .day:hover{transform:rotate(var(--rot))}
+
+/* let the wash fade out over the art so the demon stays bright through it */
+.day::before{
+  background:linear-gradient(90deg,
+    hsla(var(--h),100%,62%,.58),
+    hsla(var(--h),100%,52%,.3) 45%,
+    hsla(var(--h),100%,62%,.12) 74%,
+    transparent 92%);
+}
