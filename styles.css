@@ -952,3 +952,87 @@ footer{
     drop-shadow(0 0 16px hsla(var(--h),98%,55%,.95))
     drop-shadow(2px 2px 0 rgba(0,0,0,.95));
 }
+
+/* ================================================= */
+/* ========== PAINT COST, ROUND 3 ================== */
+/* ================================================= */
+
+/* Three fixed full-screen overlays sat on top of everything.
+
+   Two of them painted fine repeating gradients -- a 3px period for the
+   scanlines, three more at 6-8px for the crust -- recomputed across the whole
+   viewport. Pinning them to a 24px tile (a whole multiple of every period, so
+   it looks identical) means the browser rasterises one small square and lets
+   the GPU repeat it.
+
+   The other two used mix-blend-mode, which forces the compositor to read the
+   backdrop back every single frame. That is the single most expensive thing
+   left on the page, and on a near-black background plain alpha gets within a
+   hair of it. */
+
+.scanlines{
+  background-size:24px 24px;
+  will-change:transform;
+}
+
+.crust{
+  background-size:24px 24px;
+  will-change:transform;
+}
+
+.grain{
+  mix-blend-mode:normal;      /* was overlay: backdrop readback every frame */
+  opacity:.22;
+  background-size:180px 180px;
+}
+
+.rays{
+  mix-blend-mode:normal;      /* was screen */
+  opacity:.22;
+}
+
+.bolts{will-change:opacity}
+
+/* remaining animated elements onto their own layers, so the compositor moves
+   a finished texture instead of the page repainting it */
+.ticker-run{will-change:transform}
+.burst{will-change:transform}
+.blink{will-change:opacity}
+
+/* ---------- LITE MODE ---------- */
+/* The look is genuinely expensive: full-screen overlays, big blurs, a glow on
+   every row. On slower machines that is just not worth it, so it can all go.
+   The poster itself, the colours and the type are untouched. */
+
+.fx-toggle{
+  appearance:none;
+  background:none;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  font-family:"Permanent Marker",cursive;
+  font-size:inherit;
+  color:var(--dim);
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.fx-toggle:hover{color:var(--gold)}
+
+body.lite .grain,
+body.lite .scanlines,
+body.lite .crust,
+body.lite .rays,
+body.lite .bolts{display:none}
+
+body.lite .title,
+body.lite .title::after,
+body.lite .burst,
+body.lite .blink,
+body.lite .ticker-run{animation:none}
+
+body.lite .title::after{opacity:.5}
+body.lite .art{filter:none}
+body.lite .day{box-shadow:4px 4px 0 rgba(0,0,0,.85)}
+body.lite .day:hover{box-shadow:8px 8px 0 #000}
+body.lite .card{box-shadow:12px 12px 0 #000}
+body.lite .title{text-shadow:6px 6px 0 #1a0100, 10px 10px 0 #000}

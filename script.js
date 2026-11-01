@@ -531,5 +531,22 @@ document.addEventListener("keydown", (e) => {
   if (e.key.toLowerCase() === "r" && !/input|textarea/i.test(e.target.tagName)) roll();
 });
 
+/* ---------- LITE MODE ----------
+   All the grain, scanlines, rays and glow cost real frames on slower
+   machines. This drops them and keeps the poster. */
+const fxBtn = document.getElementById("fx");
+
+function setFx(on){
+  document.body.classList.toggle("lite", !on);
+  fxBtn.textContent = "effects: " + (on ? "on" : "off");
+  try { localStorage.setItem("evilsplit.fx", on ? "1" : "0"); } catch {}
+}
+
+let fxOn = true;
+try { fxOn = localStorage.getItem("evilsplit.fx") !== "0"; } catch {}
+setFx(fxOn);
+
+fxBtn.addEventListener("click", () => { fxOn = !fxOn; setFx(fxOn); });
+
 roll();
 loadArtManifest().then(found => { if (found) roll(); });
