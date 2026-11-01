@@ -43,7 +43,7 @@ const ART_SVG = [
 ];
 
 /* nothing on this page is allowed to match anything else */
-const ROW_FONTS = ["Anton","Bangers","'Rubik Dirt'","'Metal Mania'","Bungee","Creepster","Impact"];
+const ROW_FONTS = ["Anton","Bangers","'Rubik Burned'","'Metal Mania'","Bungee","Creepster","Impact"];
 
 const BURSTS = ["FREE!!","NEW!!","HOT!!","#1 !!","WOW","GO!!","100%","OMG","NSFW"];
 
