@@ -1,0 +1,34 @@
+/* Deferred: only needed once the poster renders. Loaded after first
+   paint so it cannot starve the CSS and JS that draw the page. */
+
+@font-face{
+  font-family:'Anton';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('fonts/anton-400.woff2') format('woff2');
+}
+
+@font-face{
+  font-family:'Bungee';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('fonts/bungee-400.woff2') format('woff2');
+}
+
+@font-face{
+  font-family:'Creepster';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('fonts/creepster-400.woff2') format('woff2');
+}
+
+@font-face{
+  font-family:'Rubik Burned';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('fonts/rubik-burned-400.woff2') format('woff2');
+}

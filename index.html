@@ -8,6 +8,18 @@
 <link rel="preload" href="fonts/barlow-condensed-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="styles.css">
+
+<!-- The poster is built by script.js, so nothing shows until it runs. In the
+     head with defer it is fetched in the first wave alongside the CSS rather
+     than after the body parses, and still executes in order, after parsing. -->
+<script src="img/list.js" defer></script>
+<script src="script.js" defer></script>
+
+<!-- Row and heading faces. Not needed to read the hero, and 75KB of them
+     competing for a slow connection is what kept the page blank. This loads
+     without blocking render; font-display:swap puts them in when they land. -->
+<link rel="stylesheet" href="fonts-extra.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="fonts-extra.css"></noscript>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -102,7 +114,5 @@
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<script src="img/list.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
