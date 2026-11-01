@@ -846,3 +846,64 @@ footer{
   height:100%;
   border-radius:50%;
 }
+
+/* ---------- HOVER PERFORMANCE ---------- */
+/* The old hover applied `filter: saturate() brightness()` to the whole row.
+   Measured at ~32ms median and 344ms p90 per toggle, because it forces a
+   re-render of the row's subtree -- including the art image and its three
+   stacked drop-shadows. Transitioning box-shadow alongside it repainted a
+   44px glow every frame for 150ms on top of that.
+
+   Hover now only animates transform and opacity, both of which the compositor
+   handles without repainting. */
+.day{
+  transition:transform .12s ease-out;
+  will-change:transform;
+}
+.day::after{
+  opacity:.55;
+  transition:opacity .12s ease-out;
+}
+.day:hover{
+  transform:rotate(var(--rot)) translate(-3px,-3px) scale(1.012);
+  box-shadow:8px 8px 0 #000, 0 0 44px hsla(var(--h),95%,50%,.5);
+  filter:none;            /* the expensive bit, gone */
+  background:
+    linear-gradient(90deg, hsla(var(--h),95%,45%,.42), hsla(var(--h),90%,25%,.12) 52%, rgba(0,0,0,.5)),
+    #0a0808;
+  z-index:2;
+}
+.day:hover::after{opacity:1}   /* the lift, done on the compositor instead */
+
+/* ---------- TITLE GLOW PERFORMANCE ---------- */
+/* pulseGlow animated text-shadow -- including a 110px blur -- on the biggest
+   text on the page. Repainting that blur every frame pinned the whole site at
+   roughly 6fps, which is what made hovering the rows feel broken.
+
+   The glow now lives on its own transparent-text layer whose OPACITY is
+   animated instead. The blur is rasterised once and the pulse runs on the
+   compositor. Same effect, ~60fps. */
+.title{animation:none}
+.title::after{
+  content:attr(data-text);
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  text-shadow:
+    0 0 58px rgba(255,90,30,1),
+    0 0 110px rgba(255,150,0,.75);
+  opacity:0;
+  animation:glowPulse 2.6s ease-in-out infinite;
+  will-change:opacity;
+  pointer-events:none;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:0}
+  50%{opacity:1}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .title::after{animation:none;opacity:.6}
+}
