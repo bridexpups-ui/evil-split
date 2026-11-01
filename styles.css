@@ -1190,3 +1190,116 @@ body.lite .day:hover{transform:rotate(var(--rot))}
     hsla(var(--h),100%,62%,.12) 74%,
     transparent 92%);
 }
+
+/* ================================================= */
+/* ============== MOBILE, REBUILT ================== */
+/* ================================================= */
+
+/* The three-column row does not survive a phone: the middle column got so
+   narrow that a four-word subtitle wrapped to five lines and the rows grew
+   taller than the screen. On small widths the row stacks instead, and the art
+   moves behind the text as a bleed on the right. */
+
+@media (max-width:620px){
+
+  /* --- rows --- */
+  .day{
+    display:block;
+    position:relative;
+    padding:.7rem .8rem;
+    grid-template-columns:none;
+  }
+  .day > .slot{
+    position:relative;
+    z-index:2;
+    max-width:64%;
+  }
+  .day > .slot:first-child{
+    display:flex;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:.2rem .5rem;
+    max-width:100%;
+  }
+  .dow{font-size:1.05rem}
+  .vol{
+    margin-top:0;
+    font-size:.56rem;
+    letter-spacing:.03em;
+  }
+  .name{
+    font-size:1.2rem;
+    line-height:1.02;
+    margin-top:.35rem;
+  }
+  .sub{
+    font-size:.7rem;
+    margin-top:.18rem;
+    line-height:1.25;
+  }
+
+  /* art bleeds in from the right, behind the text */
+  .art{
+    position:absolute;
+    inset:0 0 0 auto;
+    width:42%;
+    margin:0;
+    z-index:0;
+    justify-self:auto;
+  }
+  .art img{
+    width:100%;
+    height:100%;
+    aspect-ratio:auto;
+    object-fit:cover;
+    object-position:50% 14%;
+  }
+
+  /* --- controls --- */
+  .int{
+    font-size:.76rem;
+    padding:.5rem .58rem;
+    letter-spacing:.05em;
+  }
+  .buttons{gap:.5rem}
+  .btn{
+    font-size:1.05rem;
+    padding:.6rem 1.1rem;
+  }
+
+  /* --- hero --- */
+  .title{font-size:clamp(2.6rem,13vw,4.2rem)}
+  .kicker{font-size:.62rem;letter-spacing:.1em}
+  .tagline{font-size:.95rem}
+
+  /* --- stickers stop colliding with the split name --- */
+  .burst{
+    width:58px;
+    top:-16px;
+    left:auto;
+    right:6px;
+  }
+  .sticker-a{top:-12px;right:-4px;font-size:.7rem;padding:.22rem .5rem}
+  .sticker-b{top:auto;bottom:-10px;left:6px;font-size:.7rem;padding:.22rem .5rem}
+  .blink{font-size:.58rem;top:7px;left:8px}
+  .card-head{padding-top:1.5rem}
+  .card-head h2{font-size:clamp(1.4rem,7vw,2.1rem)}
+}
+
+/* no sideways scroll at any width */
+html{overflow-x:clip}
+body{overflow-x:clip}
+
+@media (max-width:620px){
+  /* burst was landing on top of the corner sticker; send it to the other side */
+  .burst{
+    left:8px;
+    right:auto;
+    top:-14px;
+  }
+  /* the gold ghost offset is fixed px, so it reads as doubled text once the
+     title shrinks. scale it down with the type. */
+  .title::before{transform:translate(-4px,-3px)}
+  .title{-webkit-text-stroke-width:3.5px}
+  .subtitle{letter-spacing:.18em}
+}
