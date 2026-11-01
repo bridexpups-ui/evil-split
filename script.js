@@ -515,7 +515,18 @@ async function copySplit(){
 
 /* ---------- WIRING ---------- */
 
-document.getElementById("reroll").addEventListener("click", roll);
+const rerollBtn = document.getElementById("reroll");
+const rerollIcon = rerollBtn.querySelector("svg");
+
+/* the arrow keeps turning the same way however often you mash it */
+let spin = 0;
+function rerollAndSpin(){
+  spin += 360;
+  rerollIcon.style.transform = `rotate(${spin}deg)`;
+  roll();
+}
+
+rerollBtn.addEventListener("click", rerollAndSpin);
 document.getElementById("copy").addEventListener("click", copySplit);
 
 document.querySelectorAll(".int").forEach(btn => {
@@ -528,7 +539,7 @@ document.querySelectorAll(".int").forEach(btn => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key.toLowerCase() === "r" && !/input|textarea/i.test(e.target.tagName)) roll();
+  if (e.key.toLowerCase() === "r" && !/input|textarea/i.test(e.target.tagName)) rerollAndSpin();
 });
 
 /* ---------- LITE MODE ----------
