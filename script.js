@@ -547,17 +547,30 @@ document.addEventListener("keydown", (e) => {
    machines. This drops them and keeps the poster. */
 const fxBtn = document.getElementById("fx");
 
-function setFx(on){
+/* `persist` only on an actual click. Writing on load would save the default
+   as though it were a choice, and the device default could never apply again. */
+function setFx(on, persist){
   document.body.classList.toggle("lite", !on);
   fxBtn.textContent = "effects: " + (on ? "on" : "off");
-  try { localStorage.setItem("evilsplit.fx", on ? "1" : "0"); } catch {}
+  if (persist){
+    try { localStorage.setItem("evilsplit.fx", on ? "1" : "0"); } catch {}
+  }
 }
 
-let fxOn = true;
-try { fxOn = localStorage.getItem("evilsplit.fx") !== "0"; } catch {}
+/* Touch devices default to lite. A phone is roughly 3x pixel density, so the
+   decoration costs about 9x what it does on a desktop, and it is the first
+   thing worth giving up to keep the page responsive. Anyone who wants it can
+   still switch it on, and that choice is remembered. */
+const isTouch = matchMedia("(hover: none), (pointer: coarse)").matches;
+
+let fxOn = !isTouch;
+try {
+  const saved = localStorage.getItem("evilsplit.fx");
+  if (saved !== null) fxOn = saved !== "0";      /* an explicit choice wins */
+} catch {}
 setFx(fxOn);
 
-fxBtn.addEventListener("click", () => { fxOn = !fxOn; setFx(fxOn); });
+fxBtn.addEventListener("click", () => { fxOn = !fxOn; setFx(fxOn, true); });
 
 roll();
 loadArtManifest().then(found => { if (found) roll(); });

@@ -1534,3 +1534,34 @@ body{overflow-x:hidden}          /* body alone is safe; <html> is not */
   /* three full-document radial gradients repainting over 3000px */
   body{background:#0c0708}
 }
+
+/* ================================================= */
+/* ====== MOBILE: LESS TO FILL ===================== */
+/* ================================================= */
+
+/* A phone is ~3x pixel density, so 375pt wide is 1125 real pixels and every
+   fill costs about 9x what it does on a monitor. These are the last big
+   fills left, and none of them carry meaning. */
+
+@media (max-width:620px){
+  /* large rotated text with a stroke, painted across the whole card */
+  .watermark,
+  .watermark2{display:none}
+
+  /* four stacked full-width gradients behind the hero */
+  .bolts{display:none}
+
+  /* one gradient per row instead of two, plus the overlay */
+  .day{background:#0f0a0a}
+  .day:hover{background:#0f0a0a}
+  .day::after{
+    background:linear-gradient(90deg,
+      hsla(var(--h),95%,45%,.5), hsla(var(--h),90%,22%,.14) 55%, transparent 85%);
+    opacity:1;
+  }
+}
+
+/* lite mode defaults ON for touch devices; the toggle still overrides it */
+body.lite .watermark,
+body.lite .watermark2,
+body.lite .bolts{display:none}
