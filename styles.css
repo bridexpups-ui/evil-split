@@ -1336,3 +1336,58 @@ body{overflow-x:clip}
 @media (max-width:620px){
   .btn-icon{width:3.1rem;height:3.1rem}
 }
+
+/* ================================================= */
+/* ============ MOBILE PERFORMANCE ================= */
+/* ================================================= */
+
+/* 1. A touch screen has no hover, so every row was being promoted to its own
+      GPU layer -- seven layers, each holding a large image -- to support an
+      effect that can never fire. Phones have far less GPU memory than a
+      desktop, and overcommitting it causes exactly the stutter being seen.
+      Hover is now gated behind an actual pointer. */
+
+@media (hover: none), (pointer: coarse){
+  .day{
+    will-change:auto;
+    transition:none;
+  }
+  .day::before{display:none}
+  .day:hover{transform:rotate(var(--rot))}
+  .day:hover::after{opacity:.25}
+  .btn-icon svg{will-change:auto}
+}
+
+@media (max-width:620px){
+
+  /* 2. Three fixed full-screen overlays means the compositor refills the whole
+        screen three times every frame, and a phone's screen is 3x denser than
+        its CSS pixels suggest. Keep the grain, drop the rest. */
+  .crust{display:none}
+  .rays{display:none}
+  .scanlines{display:none}
+  .grain{opacity:.16}
+
+  /* 3. A CSS mask forces an extra compositing pass per image, seven times
+        over. A gradient painted on top of the art does the same job. */
+  .art img{
+    -webkit-mask-image:none;
+    mask-image:none;
+  }
+  .art::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:linear-gradient(90deg, #0a0808 0%, rgba(10,8,8,.75) 32%, transparent 68%);
+  }
+  .art{position:absolute}
+
+  /* 4. Skip rendering whatever is off screen entirely. */
+  .cmt{content-visibility:auto;contain-intrinsic-size:auto 86px}
+  .stat{content-visibility:auto;contain-intrinsic-size:auto 100px}
+
+  /* 5. the flicker repaints a full-screen gradient stack */
+  .bolts{animation:none;opacity:.3}
+}

@@ -419,7 +419,7 @@ function roll(){
     sub:  workouts[i][1] + (Math.random() < .32 ? pick(SUB_JANK) : ""),
     vol:  pick(VOLUMES),
     art:  artPicks
-            ? `<img src="img/${artPicks[i]}" alt="" loading="lazy">`
+            ? `<img src="img/${artPicks[i]}" alt="" loading="lazy" decoding="async">`
             : pick(ART_SVG),
     hue:  HUES[i],
     rot:  rand(-1.6, 1.6).toFixed(2),
