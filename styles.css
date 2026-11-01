@@ -1472,3 +1472,65 @@ body{overflow-x:hidden}          /* body alone is safe; <html> is not */
    a copy actually happens. */
 .toast{visibility:hidden}
 .toast.is-up{visibility:visible}
+
+/* ================================================= */
+/* ===== iOS: NO BLUR AT ALL ON SMALL SCREENS ====== */
+/* ================================================= */
+
+/* The blank lower half, the 3-second delay before it appeared, and the jank
+   when scrolling back up are all one thing: iOS failing to paint tiles.
+   
+   A blurred shadow makes Safari allocate a texture the size of the element
+   PLUS the blur radius on every side. This page had a 110px blur on the
+   title and a 90px blur on the card -- and the card is ~2000px tall. That
+   is far past what iOS will tile, so tiles silently fail and the content
+   sits blank until something forces a repaint.
+   
+   Below 620px every blur radius becomes 0. Hard offset shadows cost nothing
+   and the design is built on them anyway. The glows go; the chunky black
+   drop shadows, the outlines and the colour all stay. */
+
+@media (max-width:620px){
+
+  /* the 110px one. an entire layer that exists only to glow. */
+  .title::after{display:none}
+
+  .title{
+    text-shadow:
+      2px 0 0 rgba(0,240,255,.55),
+      -2px 0 0 rgba(255,0,40,.55),
+      5px 5px 0 #1a0100,
+      8px 8px 0 #000;
+  }
+
+  /* the 90px one, on the tallest element on the page */
+  .card{box-shadow:8px 8px 0 #000}
+
+  .card-head h2{text-shadow:4px 4px 0 #000}
+  .sec-title{text-shadow:4px 4px 0 #000}
+  .foot-line{text-shadow:3px 3px 0 #000}
+  .stat b{text-shadow:3px 3px 0 #000}
+  .kicker{text-shadow:2px 2px 0 #000}
+  .subtitle{text-shadow:3px 3px 0 #000}
+  .tagline{text-shadow:2px 2px 0 #000}
+  .name{text-shadow:3px 3px 0 #000}
+  .dow{text-shadow:2px 2px 0 #000}
+  .sub{text-shadow:1px 1px 0 #000}
+  .card-foot{text-shadow:2px 2px 0 #000}
+  .stars{text-shadow:none}
+
+  .btn-main{box-shadow:5px 5px 0 #000}
+  .btn-main:hover{box-shadow:5px 5px 0 #000}
+  .btn-icon:active,
+  .btn-ghost:active,
+  .btn-main:active{box-shadow:1px 1px 0 #000}
+  .toast{box-shadow:5px 5px 0 #000}
+  .intensity{box-shadow:4px 4px 0 #000}
+  .stat{box-shadow:4px 4px 0 #000}
+  .cmt{box-shadow:4px 4px 0 #000}
+  .day{box-shadow:3px 3px 0 rgba(0,0,0,.85)}
+  .day:hover{box-shadow:3px 3px 0 rgba(0,0,0,.85)}
+
+  /* three full-document radial gradients repainting over 3000px */
+  body{background:#0c0708}
+}
