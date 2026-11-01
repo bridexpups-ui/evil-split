@@ -1083,3 +1083,55 @@ body.lite .day::after{box-shadow:none;will-change:auto}
 /* more contrast between rest and hover; still only an alpha change */
 .day::after{opacity:.22}
 .day:hover::after{opacity:1}
+
+/* ================================================= */
+/* ===== ROWS: EVERYTHING EXPENSIVE, REMOVED ======= */
+/* ================================================= */
+
+/* Enough guessing. The rows now contain no blur of any kind and hover does
+   not move anything. What is left is one alpha change on a flat gradient,
+   which is about the cheapest thing CSS can do.
+
+   Removed here, all of which were per-row and so multiplied by seven:
+     - drop-shadow() glow on the art (a blur pass per image)
+     - inset 0 0 42px glow on ::after (another blur, and promoted to its
+       own layer, which also ate GPU memory)
+     - the hover transform and its transition, which repainted the row's
+       image on every frame now that the row is no longer promoted */
+
+.art{filter:none}
+.art img{filter:saturate(1.6) contrast(1.25) brightness(1.08)}  /* colour only, no blur */
+
+.day{
+  transition:none;
+  will-change:auto;
+  contain:layout paint style;
+}
+
+.day::after{
+  background:linear-gradient(100deg, transparent 50%, hsla(var(--h),95%,58%,.22) 88%, transparent);
+  box-shadow:none;
+  will-change:auto;
+  opacity:.25;
+  transition:opacity .08s linear;
+}
+
+.day:hover{
+  transform:rotate(var(--rot));   /* unchanged from rest: nothing moves */
+  background:
+    linear-gradient(90deg, hsla(var(--h),100%,48%,.52), hsla(var(--h),95%,26%,.16) 52%, rgba(0,0,0,.55)),
+    #0a0808;
+  box-shadow:4px 4px 0 rgba(0,0,0,.85);
+  filter:none;
+  z-index:auto;
+}
+
+.day:hover::after{opacity:1}
+
+/* the left edge mark is the hover tell now, and a border colour is free */
+.day{border-left-color:hsl(var(--h),95%,42%)}
+.day:hover{border-left-color:hsl(var(--h),100%,70%)}
+
+/* last filter on the page, and it sat on a continuously rotating element,
+   so it was re-applied every frame for nine seconds at a time, forever */
+.burst{filter:none}
