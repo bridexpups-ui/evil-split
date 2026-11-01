@@ -1428,3 +1428,47 @@ body{
    family, same destroyed look, at a size where the difference barely reads.
    If the title text changes, re-run scratchpad/getfonts.js with new chars. */
 .title{font-family:'Rubik Dirt',Impact,sans-serif}
+
+/* ================================================= */
+/* ====== iOS: BLANK REGIONS ON LONG SCROLL ======== */
+/* ================================================= */
+
+/* Symptom: past the first screen or two, rows reserved their height but
+   painted nothing -- a black gap with the card footer below it.
+
+   Two causes, both mine:
+
+   1. `overflow-x: hidden` on <html>. On iOS this makes the documentElement
+      the scroll container, which breaks position:fixed compositing and is a
+      well-known source of exactly this. Measured it: the page does not
+      overflow without the rule at all -- the tickers clip themselves, and
+      the only genuine overflow was the grain's own -8% inset. So it was
+      buying nothing.
+
+   2. A position:fixed overlay sitting over a 3000px document. iOS renders
+      long pages in tiles and a fixed layer on top can stop tiles painting. */
+
+html{overflow-x:visible}
+body{overflow-x:hidden}          /* body alone is safe; <html> is not */
+
+/* the grain no longer reaches past the viewport, so nothing overflows */
+.grain{
+  inset:0;
+  transform:none;
+  animation:none;                /* static noise reads the same, repaints never */
+}
+
+@media (max-width:620px){
+  /* last fixed overlay, gone. no fixed-position compositing on phones. */
+  .grain{display:none}
+
+  /* these two rotate past the card edge; scale them so they stay inside */
+  .watermark{font-size:2.1rem;letter-spacing:.1em}
+  .watermark2{font-size:1.9rem}
+}
+
+/* the toast is the only fixed element left. hidden it is still a painted
+   fixed layer; visibility:hidden takes it out of painting entirely until
+   a copy actually happens. */
+.toast{visibility:hidden}
+.toast.is-up{visibility:visible}
