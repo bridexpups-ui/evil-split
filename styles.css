@@ -1036,3 +1036,50 @@ body.lite .day{box-shadow:4px 4px 0 rgba(0,0,0,.85)}
 body.lite .day:hover{box-shadow:8px 8px 0 #000}
 body.lite .card{box-shadow:12px 12px 0 #000}
 body.lite .title{text-shadow:6px 6px 0 #1a0100, 10px 10px 0 #000}
+
+/* ================================================= */
+/* ========== HOVER, ROUND 3: NO REPAINT =========== */
+/* ================================================= */
+
+/* Sweeping the cursor across the rows fires hover on and off several times a
+   second. Until now each of those still repainted the row: `background`
+   re-rasterised its gradient and `box-shadow` painted a 44px blur. Neither can
+   be done on the compositor, so the pointer outran the paint.
+
+   Hover is now transform plus one opacity, and nothing else. The glow lives on
+   ::after, rasterised once at load, and only its alpha changes -- which the
+   GPU does for free. */
+
+.day{
+  will-change:auto;             /* 7 permanent layers each holding a filtered
+                                   image cost more than they saved */
+  transition:transform .1s ease-out;
+}
+
+.day::after{
+  background:
+    linear-gradient(100deg, transparent 52%, hsla(var(--h),95%,58%,.2) 86%, transparent),
+    radial-gradient(130% 110% at 0% 50%, hsla(var(--h),95%,50%,.26), transparent 72%);
+  box-shadow:inset 0 0 42px hsla(var(--h),95%,55%,.4);
+  opacity:.4;
+  transition:opacity .1s ease-out;
+  will-change:opacity;
+}
+
+.day:hover{
+  transform:rotate(var(--rot)) translate(-3px,-3px) scale(1.012);
+  background:
+    linear-gradient(90deg, hsla(var(--h),100%,48%,.52), hsla(var(--h),95%,26%,.16) 52%, rgba(0,0,0,.55)),
+    #0a0808;                    /* identical to rest state: no repaint */
+  box-shadow:4px 4px 0 rgba(0,0,0,.85);   /* identical to rest state */
+  filter:none;
+  z-index:2;
+}
+
+.day:hover::after{opacity:1}
+
+body.lite .day::after{box-shadow:none;will-change:auto}
+
+/* more contrast between rest and hover; still only an alpha change */
+.day::after{opacity:.22}
+.day:hover::after{opacity:1}
